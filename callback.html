@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Authorization code</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; line-height: 1.6; color: #1b1b1b; background: #ffffff; }
+  code { display: block; word-break: break-all; background: #f2f2f2; padding: 12px; border-radius: 6px; margin: 8px 0 16px; }
+  .fehler { color: #b3261e; }
+</style>
+</head>
+<body>
+<h1>TikTok authorization</h1>
+<div id="inhalt">Reading response&hellip;</div>
+<script>
+  // Shows the authorization code from the URL so the operator can copy it into the local tool.
+  // Nothing is sent anywhere; the code stays in this browser tab.
+  (function () {
+    var p = new URLSearchParams(window.location.search);
+    var el = document.getElementById("inhalt");
+    function zeile(label, wert) {
+      var h = document.createElement("p"); h.textContent = label; el.appendChild(h);
+      var c = document.createElement("code"); c.textContent = wert; el.appendChild(c);
+    }
+    el.textContent = "";
+    if (p.get("error")) {
+      var e = document.createElement("p"); e.className = "fehler";
+      e.textContent = "TikTok returned an error: " + p.get("error") + " " + (p.get("error_description") || "");
+      el.appendChild(e);
+      return;
+    }
+    if (!p.get("code")) { el.textContent = "No authorization code in this URL."; return; }
+    zeile("Copy this code into the uploader:", p.get("code"));
+    if (p.get("state")) zeile("State (for verification):", p.get("state"));
+    var hinweis = document.createElement("p");
+    hinweis.textContent = "The code expires after a few minutes and can be used only once. Close this tab afterwards.";
+    el.appendChild(hinweis);
+  })();
+</script>
+</body>
+</html>
